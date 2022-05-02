@@ -3,7 +3,7 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
-public class Main {
+public class Broadcasting {
 
     public static void main(String[] args) {
         testOr();
