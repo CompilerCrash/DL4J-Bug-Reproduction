@@ -35,13 +35,13 @@ public class Loss {
         sd.loss.meanSquaredError("loss", labels, predictions, null);
 
         TrainingConfig config = new TrainingConfig.Builder()
-                .updater(new Adam(0.01))
+                .updater(new Adam(0.1))
                 .dataSetFeatureMapping("features")
                 .dataSetLabelMapping("labels")
                 .build();
         sd.setTrainingConfig(config);
 
-        // task: add 1 to the inputs
+        // Task: add 1 to the inputs
         SequenceRecordReader featureReader = new CSVLineSequenceRecordReader();
         featureReader.initialize(new FileSplit(new File("src/main/resources/features.csv")));
         SequenceRecordReader labelReader = new CSVLineSequenceRecordReader();
@@ -49,7 +49,7 @@ public class Loss {
         DataSetIterator iterator = new SequenceRecordReaderDataSetIterator(featureReader, labelReader, batchSize, 0, true);
 
         // ScoreListener will consistently report a loss of 0
-        History hist = sd.fit(iterator, 100, new ScoreListener(1));
+        History hist = sd.fit(iterator, 10, new ScoreListener(1));
 
         // The recorded loss values are also constantly 0
         LossCurve curve = hist.lossCurve();
@@ -57,7 +57,7 @@ public class Loss {
         System.out.println(curve.getLossNames());
         System.out.println(curve.getLossValues());
 
-        // However, the loss calculated here is > 0 and the values of bias are far from the optimal value of 1
+        // However, the loss calculated here is > 0
         Map<String, INDArray> map = sd.output(iterator, "loss", "bias");
         System.out.println("Final loss: " + map.get("loss"));
         System.out.println("Final bias: " + map.get("bias"));
