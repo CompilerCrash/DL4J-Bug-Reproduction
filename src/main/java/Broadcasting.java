@@ -7,7 +7,7 @@ public class Broadcasting {
 
     public static void main(String[] args) {
         testOr();
-        System.out.println();
+        System.out.println("=".repeat(40));
         testAnd();
     }
 

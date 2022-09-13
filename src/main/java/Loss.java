@@ -1,6 +1,6 @@
 import org.datavec.api.records.reader.SequenceRecordReader;
-import org.datavec.api.records.reader.impl.csv.CSVLineSequenceRecordReader;
-import org.datavec.api.split.FileSplit;
+import org.datavec.api.records.reader.impl.collection.CollectionSequenceRecordReader;
+import org.datavec.api.writable.IntWritable;
 import org.deeplearning4j.datasets.datavec.SequenceRecordReaderDataSetIterator;
 import org.nd4j.autodiff.listeners.impl.ScoreListener;
 import org.nd4j.autodiff.listeners.records.History;
@@ -13,20 +13,19 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.weightinit.impl.ZeroInitScheme;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.nd4j.linalg.api.buffer.DataType.FLOAT;
 
 public class Loss {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-
-        SameDiff sd = SameDiff.create();
-
+    public static void main(String[] args) {
         int batchSize = 4;
         int seqLength = 8;
+
+        SameDiff sd = SameDiff.create();
 
         SDVariable features = sd.squeeze(sd.placeHolder("features", FLOAT, batchSize, 1, seqLength), 1);
         SDVariable labels = sd.squeeze(sd.placeHolder("labels", FLOAT, batchSize, 1, seqLength), 1);
@@ -42,10 +41,16 @@ public class Loss {
         sd.setTrainingConfig(config);
 
         // Task: add 1 to the inputs
-        SequenceRecordReader featureReader = new CSVLineSequenceRecordReader();
-        featureReader.initialize(new FileSplit(new File("src/main/resources/features.csv")));
-        SequenceRecordReader labelReader = new CSVLineSequenceRecordReader();
-        labelReader.initialize(new FileSplit(new File("src/main/resources/labels.csv")));
+        SequenceRecordReader featureReader = new CollectionSequenceRecordReader(List.of(
+                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(1))),
+                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(2))),
+                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(3))),
+                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(4)))));
+        SequenceRecordReader labelReader = new CollectionSequenceRecordReader(List.of(
+                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(2))),
+                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(3))),
+                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(4))),
+                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(5)))));
         DataSetIterator iterator = new SequenceRecordReaderDataSetIterator(featureReader, labelReader, batchSize, 0, true);
 
         // ScoreListener will consistently report a loss of 0

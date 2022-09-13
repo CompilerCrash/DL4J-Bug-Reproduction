@@ -7,7 +7,7 @@ public class ExpandDims {
 
     public static void main(String[] args) {
         expand2dTo3d();
-        System.out.println();
+        System.out.println("=".repeat(40));
         expandLastAxis();
     }
 

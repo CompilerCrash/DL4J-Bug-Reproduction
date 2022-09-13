@@ -6,7 +6,7 @@ public class ScatterUpdate {
 
     public static void main(String[] args) {
         INDArray v1 = Nd4j.zeros(5);
-        INDArray v2 = new NDBase().scatterUpdate(v1, Nd4j.scalar(2), Nd4j.scalar(1f));
+        INDArray v2 = new NDBase().scatterUpdate(v1, Nd4j.scalar(2), Nd4j.scalar(1f)); // throws exception
         System.out.println(v2); // expected result: [0, 0, 1, 0, 0]
     }
 }
