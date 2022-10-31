@@ -55,7 +55,7 @@ public class Dropout {
         SameDiff sd = SameDiff.create();
 
         SDVariable features = sd.placeHolder("features", DataType.FLOAT, batchSize, seqLength);
-        SDVariable labels = sd.placeHolder("labels", DataType.FLOAT, batchSize, batchSize);
+        SDVariable labels = sd.placeHolder("labels", DataType.FLOAT, batchSize, seqLength);
         SDVariable predictions = sd.nn.dropout("predictions", features, false, 0.5);
         sd.loss.meanSquaredError("loss", labels, predictions, null);
 
@@ -67,9 +67,9 @@ public class Dropout {
         sd.setTrainingConfig(config);
 
         RecordReader reader = new CollectionRecordReader(
-                Collections.nCopies(batchSize, Collections.nCopies(seqLength + batchSize, new IntWritable(1))));
+                Collections.nCopies(batchSize, Collections.nCopies(2 * seqLength, new IntWritable(1))));
         DataSetIterator iterator = new RecordReaderDataSetIterator(
-                reader, batchSize, seqLength, seqLength + batchSize - 1, true);
+                reader, batchSize, seqLength, 2 * seqLength - 1, true);
 
         System.out.println(sd.output(iterator, "predictions").get("predictions")); // forward pass works
 
