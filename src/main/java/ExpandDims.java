@@ -6,9 +6,15 @@ import org.nd4j.linalg.factory.Nd4j;
 public class ExpandDims {
 
     public static void main(String[] args) {
+        String separator = "=".repeat(40);
+
         expand2dTo3d();
-        System.out.println("=".repeat(40));
+        System.out.println(separator);
         expandLastAxis();
+        System.out.println(separator);
+        nd4jExpandOutOfBounds();
+        System.out.println(separator);
+        sdExpandOutOfBounds();
     }
 
     public static void expand2dTo3d() {
@@ -24,5 +30,17 @@ public class ExpandDims {
         System.out.println(java.util.Arrays.toString(v1.shape())); // []
         INDArray v2 = Nd4j.expandDims(v1, -1); // throws exception
         System.out.println(java.util.Arrays.toString(v2.shape())); // should now be [1]
+    }
+
+    public static void nd4jExpandOutOfBounds() {
+        INDArray v1 = Nd4j.zeros(1, 1);
+        INDArray v2 = Nd4j.expandDims(v1, 3); // crashes
+    }
+
+    public static void sdExpandOutOfBounds() {
+        SameDiff sd = SameDiff.create();
+        SDVariable v1 = sd.zero(null, 1, 1);
+        SDVariable v2 = sd.expandDims(v1, 3);
+        v2.shape().eval(); // crashes
     }
 }
