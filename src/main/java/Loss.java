@@ -1,7 +1,7 @@
-import org.datavec.api.records.reader.SequenceRecordReader;
-import org.datavec.api.records.reader.impl.collection.CollectionSequenceRecordReader;
+import org.datavec.api.records.reader.RecordReader;
+import org.datavec.api.records.reader.impl.collection.CollectionRecordReader;
 import org.datavec.api.writable.IntWritable;
-import org.deeplearning4j.datasets.datavec.SequenceRecordReaderDataSetIterator;
+import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.datasets.iterator.utilty.ListDataSetIterator;
 import org.nd4j.autodiff.listeners.impl.ScoreListener;
 import org.nd4j.autodiff.listeners.records.History;
@@ -17,8 +17,8 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.learning.config.Sgd;
+import org.nd4j.weightinit.impl.OneInitScheme;
 import org.nd4j.weightinit.impl.XavierInitScheme;
-import org.nd4j.weightinit.impl.ZeroInitScheme;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,13 +37,13 @@ public class Loss {
 
     public static void test1() {
         int batchSize = 4;
-        int seqLength = 8;
+        int modelDim = 8;
 
         SameDiff sd = SameDiff.create();
 
-        SDVariable features = sd.squeeze(sd.placeHolder("features", FLOAT, batchSize, 1, seqLength), 1);
-        SDVariable labels = sd.squeeze(sd.placeHolder("labels", FLOAT, batchSize, 1, seqLength), 1);
-        SDVariable bias = sd.var("bias", new ZeroInitScheme('c'), FLOAT, seqLength);
+        SDVariable features = sd.placeHolder("features", FLOAT, batchSize, modelDim);
+        SDVariable labels = sd.placeHolder("labels", FLOAT, batchSize, modelDim);
+        SDVariable bias = sd.var("bias", new OneInitScheme('c'), FLOAT, modelDim);
         SDVariable predictions = features.add("predictions", bias);
         sd.loss.meanSquaredError("loss", labels, predictions, null);
 
@@ -51,27 +51,20 @@ public class Loss {
                 .updater(new Adam(0.1))
                 .dataSetFeatureMapping("features")
                 .dataSetLabelMapping("labels")
-                // .lossVariables(Collections.singletonList("loss")) // this line fixes the problem
+                // .lossVariables(List.of("loss")) // this line fixes the problem
                 .build();
         sd.setTrainingConfig(config);
 
-        // Task: add 1 to the inputs
-        SequenceRecordReader featureReader = new CollectionSequenceRecordReader(List.of(
-                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(1))),
-                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(2))),
-                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(3))),
-                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(4)))));
-        SequenceRecordReader labelReader = new CollectionSequenceRecordReader(List.of(
-                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(2))),
-                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(3))),
-                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(4))),
-                Collections.nCopies(seqLength, Collections.singletonList(new IntWritable(5)))));
-        DataSetIterator iterator = new SequenceRecordReaderDataSetIterator(featureReader, labelReader, batchSize, 0, true);
+        // Task: output must be equal to input
+        RecordReader reader = new CollectionRecordReader(
+                Collections.nCopies(batchSize, Collections.nCopies(2 * modelDim, new IntWritable(1))));
+        DataSetIterator iterator = new RecordReaderDataSetIterator(
+                reader, batchSize, modelDim, 2 * modelDim - 1, true);
 
         // ScoreListener will consistently report a loss of 0
         History hist = sd.fit(iterator, 10, new ScoreListener(1));
 
-        // The recorded loss values are also constantly 0
+        // The recorded loss curve is also constantly 0
         LossCurve curve = hist.lossCurve();
         System.out.println("Loss curve:");
         System.out.println(curve.getLossNames());
