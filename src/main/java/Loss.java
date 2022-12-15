@@ -1,7 +1,4 @@
-import org.datavec.api.records.reader.RecordReader;
-import org.datavec.api.records.reader.impl.collection.CollectionRecordReader;
-import org.datavec.api.writable.IntWritable;
-import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+import org.deeplearning4j.datasets.iterator.RandomDataSetIterator;
 import org.deeplearning4j.datasets.iterator.utilty.ListDataSetIterator;
 import org.nd4j.autodiff.listeners.impl.ScoreListener;
 import org.nd4j.autodiff.listeners.records.History;
@@ -25,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.deeplearning4j.datasets.iterator.RandomDataSetIterator.Values.ONES;
 import static org.nd4j.linalg.api.buffer.DataType.FLOAT;
 
 public class Loss {
@@ -56,10 +54,7 @@ public class Loss {
         sd.setTrainingConfig(config);
 
         // Task: output must be equal to input
-        RecordReader reader = new CollectionRecordReader(
-                Collections.nCopies(batchSize, Collections.nCopies(2 * modelDim, new IntWritable(1))));
-        DataSetIterator iterator = new RecordReaderDataSetIterator(
-                reader, batchSize, modelDim, 2 * modelDim - 1, true);
+        DataSetIterator iterator = new RandomDataSetIterator(1, new long[]{batchSize, modelDim}, new long[]{batchSize, modelDim}, ONES, ONES);
 
         // ScoreListener will consistently report a loss of 0
         History hist = sd.fit(iterator, 10, new ScoreListener(1));

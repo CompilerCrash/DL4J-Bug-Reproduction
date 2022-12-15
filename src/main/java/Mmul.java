@@ -1,7 +1,4 @@
-import org.datavec.api.records.reader.RecordReader;
-import org.datavec.api.records.reader.impl.collection.CollectionRecordReader;
-import org.datavec.api.writable.IntWritable;
-import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+import org.deeplearning4j.datasets.iterator.RandomDataSetIterator;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.autodiff.samediff.TrainingConfig;
@@ -12,7 +9,7 @@ import org.nd4j.linalg.exception.ND4JIllegalStateException;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.Adam;
 
-import java.util.Collections;
+import static org.deeplearning4j.datasets.iterator.RandomDataSetIterator.Values.ONES;
 
 public class Mmul {
 
@@ -152,10 +149,7 @@ public class Mmul {
                 .build();
         sd.setTrainingConfig(config);
 
-        RecordReader reader = new CollectionRecordReader(
-                Collections.nCopies(batchSize, Collections.nCopies(seqLength + batchSize, new IntWritable(1))));
-        DataSetIterator iterator = new RecordReaderDataSetIterator(
-                reader, batchSize, seqLength, seqLength + batchSize - 1, true);
+        DataSetIterator iterator = new RandomDataSetIterator(1, new long[]{batchSize, seqLength}, new long[]{batchSize, batchSize}, ONES, ONES);
 
         System.out.println(sd.output(iterator, "predictions").get("predictions")); // forward pass works
 

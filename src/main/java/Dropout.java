@@ -1,7 +1,4 @@
-import org.datavec.api.records.reader.RecordReader;
-import org.datavec.api.records.reader.impl.collection.CollectionRecordReader;
-import org.datavec.api.writable.IntWritable;
-import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+import org.deeplearning4j.datasets.iterator.RandomDataSetIterator;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.autodiff.samediff.TrainingConfig;
@@ -11,7 +8,7 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.Adam;
 
-import java.util.Collections;
+import static org.deeplearning4j.datasets.iterator.RandomDataSetIterator.Values.ONES;
 
 public class Dropout {
 
@@ -50,12 +47,12 @@ public class Dropout {
 
     public static void dropoutBackprop() {
         int batchSize = 4;
-        int seqLength = 8;
+        int modelDim = 8;
 
         SameDiff sd = SameDiff.create();
 
-        SDVariable features = sd.placeHolder("features", DataType.FLOAT, batchSize, seqLength);
-        SDVariable labels = sd.placeHolder("labels", DataType.FLOAT, batchSize, seqLength);
+        SDVariable features = sd.placeHolder("features", DataType.FLOAT, batchSize, modelDim);
+        SDVariable labels = sd.placeHolder("labels", DataType.FLOAT, batchSize, modelDim);
         SDVariable predictions = sd.nn.dropout("predictions", features, false, 0.5);
         sd.loss.meanSquaredError("loss", labels, predictions, null);
 
@@ -66,10 +63,7 @@ public class Dropout {
                 .build();
         sd.setTrainingConfig(config);
 
-        RecordReader reader = new CollectionRecordReader(
-                Collections.nCopies(batchSize, Collections.nCopies(2 * seqLength, new IntWritable(1))));
-        DataSetIterator iterator = new RecordReaderDataSetIterator(
-                reader, batchSize, seqLength, 2 * seqLength - 1, true);
+        DataSetIterator iterator = new RandomDataSetIterator(1, new long[]{batchSize, modelDim}, new long[]{batchSize, modelDim}, ONES, ONES);
 
         System.out.println(sd.output(iterator, "predictions").get("predictions")); // forward pass works
 

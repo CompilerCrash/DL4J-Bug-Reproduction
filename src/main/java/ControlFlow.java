@@ -1,7 +1,4 @@
-import org.datavec.api.records.reader.RecordReader;
-import org.datavec.api.records.reader.impl.collection.CollectionRecordReader;
-import org.datavec.api.writable.IntWritable;
-import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+import org.deeplearning4j.datasets.iterator.RandomDataSetIterator;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.autodiff.samediff.TrainingConfig;
@@ -10,7 +7,7 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.weightinit.impl.OneInitScheme;
 
-import java.util.Collections;
+import static org.deeplearning4j.datasets.iterator.RandomDataSetIterator.Values.ONES;
 
 public class ControlFlow {
 
@@ -42,10 +39,7 @@ public class ControlFlow {
                 .build();
         sd.setTrainingConfig(config);
 
-        RecordReader reader = new CollectionRecordReader(
-                Collections.nCopies(batchSize, Collections.nCopies(2 * modelDim, new IntWritable(1))));
-        DataSetIterator iterator = new RecordReaderDataSetIterator(
-                reader, batchSize, modelDim, 2 * modelDim - 1, true);
+        DataSetIterator iterator = new RandomDataSetIterator(1, new long[]{batchSize, modelDim}, new long[]{batchSize, modelDim}, ONES, ONES);
 
         System.out.println(sd.output(iterator, "predictions").get("predictions")); // forward pass works
 
@@ -74,10 +68,7 @@ public class ControlFlow {
                 .build();
         sd.setTrainingConfig(config);
 
-        RecordReader reader = new CollectionRecordReader(
-                Collections.nCopies(batchSize, Collections.nCopies(2 * modelDim, new IntWritable(1))));
-        DataSetIterator iterator = new RecordReaderDataSetIterator(
-                reader, batchSize, modelDim, 2 * modelDim - 1, true);
+        DataSetIterator iterator = new RandomDataSetIterator(1, new long[]{batchSize, modelDim}, new long[]{batchSize, modelDim}, ONES, ONES);
 
         System.out.println(sd.output(iterator, "predictions").get("predictions")); // forward pass works
 
