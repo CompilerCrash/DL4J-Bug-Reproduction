@@ -33,6 +33,7 @@ public class Loss {
         test2();
     }
 
+    // TODO
     public static void test1() {
         int batchSize = 4;
         int modelDim = 8;
@@ -71,6 +72,7 @@ public class Loss {
         System.out.println("Final bias: " + map.get("bias"));
     }
 
+    // TODO
     // Source: https://github.com/deeplearning4j/deeplearning4j/issues/9806
     public static void test2() {
         int nIn = 4;

@@ -74,6 +74,7 @@ public class Mmul {
         }
     }
 
+    // FIXME
     public static void nd4jBatchMmulDouble() {
         INDArray[] res = Nd4j.base.batchMmul(alpha.castTo(DataType.DOUBLE), beta.castTo(DataType.DOUBLE), new INDArray[]{a}, b);
         System.out.println(res[0]); // wrong result
@@ -118,6 +119,7 @@ public class Mmul {
         }
     }
 
+    // FIXME
     public static void sdBatchMmulDouble() {
         SameDiff sd = SameDiff.create();
         SDVariable[] res = sd.batchMmul(sd.constant(alpha).castTo(DataType.DOUBLE), sd.constant(beta).castTo(DataType.DOUBLE), new SDVariable[]{sd.constant(a)}, sd.constant(b));
@@ -130,6 +132,7 @@ public class Mmul {
         System.out.println(res.eval()); // correct
     }
 
+    // TODO
     public static void sdTensorMmulBackprop() {
         int batchSize = 4;
         int seqLength = 8;

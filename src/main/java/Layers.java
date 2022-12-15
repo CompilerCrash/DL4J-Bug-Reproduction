@@ -32,55 +32,65 @@ public class Layers {
         sdReluLayerNOut1();
     }
 
+    // FIXME
     public static void nd4jLinearLayerBiasNull() {
         INDArray res = Nd4j.nn.linear(Nd4j.ones(b, n), Nd4j.ones(n, n), null); // throws exception
         System.out.println(res);
     }
 
+    // FIXME
     public static void sdLinearLayerBiasNull() {
         SameDiff sd = SameDiff.create();
         SDVariable res = sd.nn.linear(sd.one(null, b, n), sd.one(null, n, n), null); // throws exception
         System.out.println(res.eval());
     }
 
+    // FIXME
     public static void nd4jReluLayerBiasNull() {
         INDArray res = Nd4j.nn.reluLayer(Nd4j.ones(b, n), Nd4j.ones(n, n), null); // throws exception
         System.out.println(res);
     }
 
+    // FIXME
     public static void sdReluLayerBiasNull() {
         SameDiff sd = SameDiff.create();
         SDVariable res = sd.nn.reluLayer(sd.one(null, b, n), sd.one(null, n, n), null); // throws exception
         System.out.println(res.eval());
     }
 
+    // FIXME
     public static void nd4jReluLayerBatch1() {
         INDArray res = Nd4j.nn.reluLayer(Nd4j.ones(1, n), Nd4j.ones(n, n), Nd4j.zeros(n)); // throws exception
         System.out.println(res);
     }
 
+    // FIXME
     public static void nd4jReluLayerNIn1() {
         INDArray res = Nd4j.nn.reluLayer(Nd4j.ones(b, 1), Nd4j.ones(1, n), Nd4j.zeros(n)); // throws exception
         System.out.println(res);
     }
 
+    // FIXME
     public static void nd4JReluLayerNOut1() {
         INDArray res = Nd4j.nn.reluLayer(Nd4j.ones(b, n), Nd4j.ones(n, 1), Nd4j.zeros(1)); // throws exception
         System.out.println(res);
     }
 
+    // FIXME
     public static void sdReluLayerBatch1() {
         SameDiff sd = SameDiff.create();
         SDVariable res = sd.nn.reluLayer(sd.one(null, 1, n), sd.one(null, n, n), sd.zero(null, n)); // throws exception
         System.out.println(res.eval());
     }
 
+    // FIXME
     public static void sdReluLayerNIn1() {
         SameDiff sd = SameDiff.create();
         SDVariable res = sd.nn.reluLayer(sd.one(null, b, 1), sd.one(null, 1, n), sd.zero(null, n)); // throws exception
         System.out.println(res.eval());
     }
 
+    // FIXME
     public static void sdReluLayerNOut1() {
         SameDiff sd = SameDiff.create();
         SDVariable res = sd.nn.reluLayer(sd.one(null, b, n), sd.one(null, n, 1), sd.zero(null, 1)); // throws exception

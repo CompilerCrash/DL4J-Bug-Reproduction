@@ -38,13 +38,15 @@ public class Dropout {
         System.out.println(res0); // same as res1 but should be different
     }
 
+    // FIXME
     public static void dropoutValues() {
-        INDArray res02 = Nd4j.nn.dropout(in, true, 0.2);
+        INDArray res02 = Nd4j.nn.dropout(in, false, 0.2);
         System.out.println(res02); // should only contain 1s and 0s but contains 5s instead of 1s
-        INDArray res08 = Nd4j.nn.dropout(in, true, 0.8);
+        INDArray res08 = Nd4j.nn.dropout(in, false, 0.8);
         System.out.println(res08); // should only contain 1s and 0s but contains 1.25s instead of 1s
     }
 
+    // TODO
     public static void dropoutBackprop() {
         int batchSize = 4;
         int modelDim = 8;

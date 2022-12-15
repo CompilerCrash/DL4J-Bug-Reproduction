@@ -1,6 +1,7 @@
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.exception.ND4JIllegalStateException;
 import org.nd4j.linalg.factory.Nd4j;
 
 public class ExpandDims {
@@ -17,10 +18,11 @@ public class ExpandDims {
         sdExpandOutOfBounds();
     }
 
+    // FIXME
     public static void expand2dTo3d() {
         SameDiff sd = SameDiff.create();
         SDVariable v1 = sd.zero(null, 1, 1);
-        SDVariable v2 = sd.expandDims(v1, -1);
+        SDVariable v2 = sd.expandDims(v1, -1); // new: validation error
         System.out.println(v1.shape().eval()); // [1, 1]
         System.out.println(v2.shape().eval()); // should be [1, 1, 1] but is [1, 1]
     }
@@ -33,14 +35,22 @@ public class ExpandDims {
     }
 
     public static void nd4jExpandOutOfBounds() {
-        INDArray v1 = Nd4j.zeros(1, 1);
-        INDArray v2 = Nd4j.expandDims(v1, 3); // crashes
+        try {
+            INDArray v1 = Nd4j.zeros(1, 1);
+            INDArray v2 = Nd4j.expandDims(v1, 3); // crashes
+        } catch (ND4JIllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void sdExpandOutOfBounds() {
-        SameDiff sd = SameDiff.create();
-        SDVariable v1 = sd.zero(null, 1, 1);
-        SDVariable v2 = sd.expandDims(v1, 3);
-        v2.shape().eval(); // crashes
+        try {
+            SameDiff sd = SameDiff.create();
+            SDVariable v1 = sd.zero(null, 1, 1);
+            SDVariable v2 = sd.expandDims(v1, 3);
+            v2.shape().eval(); // crashes
+        } catch (ND4JIllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 }
