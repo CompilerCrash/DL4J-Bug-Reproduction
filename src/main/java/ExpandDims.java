@@ -37,11 +37,10 @@ public class ExpandDims {
         System.out.println(Arrays.toString(v2.shape())); // should now be [1]
     }
 
-    // FIXME
     public static void expandLastAxis() {
         INDArray v1 = Nd4j.ones(2, 2);
         System.out.println(Arrays.toString(v1.shape())); // [2, 2]
-        INDArray v2 = Nd4j.expandDims(v1, 2); // throws exception
+        INDArray v2 = Nd4j.expandDims(v1, -1); // throws exception
         System.out.println(Arrays.toString(v2.shape())); // should now be [2, 2, 1]
     }
 

@@ -132,7 +132,6 @@ public class Mmul {
         System.out.println(res.eval()); // correct
     }
 
-    // TODO
     public static void sdTensorMmulBackprop() {
         int batchSize = 4;
         int seqLength = 8;

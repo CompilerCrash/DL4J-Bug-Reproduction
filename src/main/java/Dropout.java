@@ -7,6 +7,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.Adam;
+import org.nd4j.weightinit.impl.OneInitScheme;
 
 import static org.deeplearning4j.datasets.iterator.RandomDataSetIterator.Values.ONES;
 
@@ -38,7 +39,6 @@ public class Dropout {
         System.out.println(res0); // same as res1 but should be different
     }
 
-    // FIXME
     public static void dropoutValues() {
         INDArray res02 = Nd4j.nn.dropout(in, false, 0.2);
         System.out.println(res02); // should only contain 1s and 0s but contains 5s instead of 1s
@@ -46,7 +46,7 @@ public class Dropout {
         System.out.println(res08); // should only contain 1s and 0s but contains 1.25s instead of 1s
     }
 
-    // TODO
+    // FIXME
     public static void dropoutBackprop() {
         int batchSize = 4;
         int modelDim = 8;
@@ -55,7 +55,8 @@ public class Dropout {
 
         SDVariable features = sd.placeHolder("features", DataType.FLOAT, batchSize, modelDim);
         SDVariable labels = sd.placeHolder("labels", DataType.FLOAT, batchSize, modelDim);
-        SDVariable predictions = sd.nn.dropout("predictions", features, false, 0.5);
+        SDVariable bias = sd.var("bias", new OneInitScheme('c'), modelDim);
+        SDVariable predictions = sd.nn.dropout("predictions", features.add(bias), false, 0.5);
         sd.loss.meanSquaredError("loss", labels, predictions, null);
 
         TrainingConfig config = new TrainingConfig.Builder()

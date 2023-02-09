@@ -21,7 +21,6 @@ public class Training {
         noSuccessWithLinear();
     }
 
-    // FIXME
     public static void noTrainableVariables() {
         int batchSize = 4;
         int modelDim = 8;
@@ -47,7 +46,6 @@ public class Training {
         sd.fit(iterator, 10); // throws exception
     }
 
-    // FIXME
     public static void noSuccessWithLinear() {
         int batchSize = 32;
         int modelDim = 10;

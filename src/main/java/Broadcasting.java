@@ -29,7 +29,6 @@ public class Broadcasting {
         */
     }
 
-    // FIXME
     public static void testAnd() {
         SameDiff sd = SameDiff.create();
         SDVariable a = sd.constant(Nd4j.createFromArray(true, false, false, true).reshape(2, 2));
